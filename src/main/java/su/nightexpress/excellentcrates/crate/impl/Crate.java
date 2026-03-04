@@ -411,7 +411,7 @@ public class Crate implements ConfigBacked {
 
     private void manageHologram(@NotNull Consumer<HologramManager> consumer) {
         if (this.hologramEnabled) {
-            this.plugin.getHologramManager().ifPresent(consumer);
+            Optional.ofNullable(this.plugin.getHologramManager()).ifPresent(consumer);
         }
     }
 

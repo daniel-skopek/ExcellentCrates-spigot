@@ -96,7 +96,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.runTask(task -> this.reportProblems()); // After everything is loaded.
+        this.plugin.getFoliaLib().getScheduler().runLater(task -> this.reportProblems(), 0); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 

@@ -1,5 +1,7 @@
 package su.nightexpress.excellentcrates;
 
+import com.tcoded.folialib.FoliaLib;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.addon.CratesAddon;
 import su.nightexpress.excellentcrates.command.BaseCommands;
@@ -27,9 +29,9 @@ import su.nightexpress.nightcore.util.Plugins;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
+@Getter
 public class CratesPlugin extends NightPlugin {
 
     private final List<CratesAddon> addons = new ArrayList<>();
@@ -47,6 +49,8 @@ public class CratesPlugin extends NightPlugin {
     private EditorManager   editorManager;
 
     private CrateLogger crateLogger;
+
+    private FoliaLib foliaLib;
 
     @Override
     @NotNull
@@ -74,6 +78,8 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void enable() {
+        foliaLib = new FoliaLib(this);
+
         this.crateLogger = new CrateLogger(this);
         this.dialogRegistry = new DialogRegistry(this);
 
@@ -113,8 +119,6 @@ public class CratesPlugin extends NightPlugin {
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.setup(this);
         }
-
-
 
         this.loadCommands();
         this.proceedAddons(CratesAddon::onLoad);
@@ -160,57 +164,7 @@ public class CratesPlugin extends NightPlugin {
         this.addons.forEach(consumer);
     }
 
-    @NotNull
-    public List<CratesAddon> getAddons() {
-        return this.addons;
-    }
-
     public boolean hasHolograms() {
         return this.hologramManager != null && this.hologramManager.hasHandler();
-    }
-
-    @NotNull
-    public Optional<HologramManager> getHologramManager() {
-        return Optional.ofNullable(this.hologramManager);
-    }
-
-    @NotNull
-    public CrateLogger getCrateLogger() {
-        return this.crateLogger;
-    }
-
-    @NotNull
-    public DataHandler getDataHandler() {
-        return this.dataHandler;
-    }
-
-    @NotNull
-    public DataManager getDataManager() {
-        return this.dataManager;
-    }
-
-    @NotNull
-    public UserManager getUserManager() {
-        return this.userManager;
-    }
-
-    @NotNull
-    public OpeningManager getOpeningManager() {
-        return this.openingManager;
-    }
-
-    @NotNull
-    public EditorManager getEditorManager() {
-        return this.editorManager;
-    }
-
-    @NotNull
-    public KeyManager getKeyManager() {
-        return this.keyManager;
-    }
-
-    @NotNull
-    public CrateManager getCrateManager() {
-        return this.crateManager;
     }
 }

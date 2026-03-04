@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates.opening;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -56,7 +55,7 @@ public class OpeningListener extends AbstractListener<CratesPlugin> {
             opening.stop();
         }
 
-        Bukkit.getScheduler().runTaskLater(plugin, player::updateInventory, 1);
+        plugin.getFoliaLib().getScheduler().runLater(player::updateInventory, 1);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
