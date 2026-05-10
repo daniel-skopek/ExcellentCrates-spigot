@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class FakeEntityGroup {
@@ -18,7 +19,7 @@ public class FakeEntityGroup {
     public FakeEntityGroup(@NotNull WorldPos blockPos) {
         this.blockPos = blockPos;
         this.entities = new ArrayList<>();
-        this.humanViewers = new HashSet<>();
+        this.humanViewers = ConcurrentHashMap.newKeySet();
         this.disabled = false;
     }
 

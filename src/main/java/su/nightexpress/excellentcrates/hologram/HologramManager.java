@@ -74,7 +74,13 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         this.plugin.getCrateManager().getCrates().forEach(crate -> {
             if (!crate.isHologramEnabled()) return;
 
-            this.render(crate);
+            try {
+                this.render(crate);
+            }
+            catch (Exception exception) {
+                this.plugin.error("Could not render hologram for '" + crate.getId() + "' crate!");
+                exception.printStackTrace();
+            }
         });
     }
 
@@ -153,6 +159,11 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         FakeDisplay display = this.getDisplay(crate);
         if (display == null) return;
 
+        if (display.getGroups().isEmpty()) {
+            this.displayMap.remove(crate.getId());
+            return;
+        }
+
         List<String> text = Replacer.create().replace(crate.replacePlaceholders()).apply(crate.getHologramText().reversed());
         if (text.isEmpty()) return;
 
@@ -168,7 +179,16 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
                 continue;
             }
 
-            List<Player> players = new ArrayList<>(world.getPlayers());
+            List<Player> players;
+            try {
+                players = new ArrayList<>(world.getPlayers());
+            }
+            catch (Exception exception) {
+                this.plugin.error("Could not get players from world '" + world.getName() + "' for hologram rendering!");
+                exception.printStackTrace();
+                continue;
+            }
+
             players.removeIf(player -> {
                 if (CrateUtils.isInEffectRange(player, location)) return false;
 
@@ -177,23 +197,28 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
             });
 
             if (players.isEmpty()) {
-                this.discard(group); // Remove all viewers and send entity destroy packet.
+                this.discard(group);
                 continue;
             }
 
             players.forEach(player -> {
-                boolean needSpawn = !group.isViewer(player);
+                try {
+                    boolean needSpawn = !group.isViewer(player);
 
-                List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
-                List<FakeEntity> holograms = group.getEntities();
-                for (int index = 0; index < holograms.size(); index++) {
-                    // Fix for fake entity's text not being updated/replaced when text size is less than holograms amount, so force it to empty string.
-                    String line = index >= hologramText.size() ? "" : hologramText.get(index);
-                    FakeEntity entity = holograms.get(index);
-                    this.handler.sendHologramPackets(player, entity, needSpawn, line);
+                    List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
+                    List<FakeEntity> holograms = group.getEntities();
+                    for (int index = 0; index < holograms.size(); index++) {
+                        String line = index >= hologramText.size() ? "" : hologramText.get(index);
+                        FakeEntity entity = holograms.get(index);
+                        this.handler.sendHologramPackets(player, entity, needSpawn, line);
+                    }
+
+                    group.addViewer(player);
                 }
-
-                group.addViewer(player);
+                catch (Exception exception) {
+                    this.plugin.error("Could not send hologram packets for player '" + player.getName() + "'!");
+                    exception.printStackTrace();
+                }
             });
         }
     }
@@ -216,8 +241,6 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
 
             double height = block.getBoundingBox().getHeight() / 2D + yOffset;
 
-            // Allocate ID values for our fake entities, so there is no clash with new server entities.
-
             FakeEntityGroup group = display.getGroupOrCreate(blockPos);
 
             for (int index = 0; index < originText.size(); index++) {
@@ -227,6 +250,8 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
                 group.addEntity(FakeEntity.create(location));
             }
         });
+
+        if (display.getGroups().isEmpty()) return;
 
         this.displayMap.put(crate.getId(), display);
     }
