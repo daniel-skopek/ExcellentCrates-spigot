@@ -2,7 +2,6 @@ package su.nightexpress.excellentcrates.hologram;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,7 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         if (this.detectHandler()) {
             this.addListener(new HologramListener(this.plugin, this));
 
-            this.addAsyncTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get());
+            this.addTask(this::tickHolograms, Config.CRATE_HOLOGRAM_UPDATE_INTERVAL.get());
         }
     }
 
@@ -236,18 +235,25 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
         double lineGap = Config.CRATE_HOLOGRAM_LINE_GAP.get();
 
         crate.getBlockPositions().forEach(blockPos -> {
-            Block block = blockPos.toBlock();
-            if (block == null) return;
+            try {
+                World world = blockPos.getWorld();
+                if (world == null) return;
 
-            double height = block.getBoundingBox().getHeight() / 2D + yOffset;
+                double blockHeight = 1.0;
+                double height = blockHeight / 2D + yOffset;
 
-            FakeEntityGroup group = display.getGroupOrCreate(blockPos);
+                FakeEntityGroup group = display.getGroupOrCreate(blockPos);
 
-            for (int index = 0; index < originText.size(); index++) {
-                double gap = lineGap * index;
+                for (int index = 0; index < originText.size(); index++) {
+                    double gap = lineGap * index;
 
-                Location location = LocationUtil.setCenter3D(block.getLocation()).add(0, height + gap, 0);
-                group.addEntity(FakeEntity.create(location));
+                    Location location = LocationUtil.setCenter3D(new Location(world, blockPos.getX(), blockPos.getY(), blockPos.getZ())).add(0, height + gap, 0);
+                    group.addEntity(FakeEntity.create(location));
+                }
+            }
+            catch (Exception exception) {
+                this.plugin.error("Could not create hologram for block at '" + blockPos + "'!");
+                exception.printStackTrace();
             }
         });
 
