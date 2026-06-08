@@ -515,6 +515,7 @@ public class Crate implements ConfigBacked {
         this.plugin.getCrateManager().removeCratePositions(this);
         this.blockPositions.add(pos);
         this.plugin.getCrateManager().addCratePositions(this);
+        this.markDirty();
     }
 
     public void clearBlockPositions() {

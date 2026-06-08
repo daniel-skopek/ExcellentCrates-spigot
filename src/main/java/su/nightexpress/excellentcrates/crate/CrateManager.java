@@ -420,10 +420,9 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         Crate crate = this.getCrateById(crateId);
         if (crate != null) {
-            crate.clearBlockPositions();
             crate.addBlockPosition(block.getLocation());
             crate.recreateHologram();
-            crate.markDirty();
+            crate.saveForce();
             this.plugin.getEditorManager().openOptionsMenu(player, crate);
         }
 
