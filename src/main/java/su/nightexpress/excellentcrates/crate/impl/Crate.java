@@ -164,7 +164,7 @@ public class Crate implements ConfigBacked {
         this.setName(config.getString("Name", this.getId()));
         this.setDescription(config.getStringList("Description"));
 
-        this.setItem(ItemHelper.read(config, "ItemProvider").orElse(ItemHelper.vanilla(CrateUtils.getDefaultItem(this))));
+        this.setItem(ItemHelper.read(config, "ItemProvider").orElseGet(() -> ItemHelper.vanilla(CrateUtils.getDefaultItem(this))));
         this.setItemStackable(config.getBoolean("ItemStackable", true));
 
         this.setPreviewEnabled(config.getBoolean("Preview.Enabled"));

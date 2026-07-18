@@ -52,6 +52,8 @@ public class CratesPlugin extends NightPlugin {
 
     private FoliaLib foliaLib;
 
+    private boolean reloading;
+
     @Override
     @NotNull
     protected PluginDetails getDefaultDetails() {
@@ -77,6 +79,17 @@ public class CratesPlugin extends NightPlugin {
     }
 
     @Override
+    public void reload() {
+        this.reloading = true;
+        try {
+            super.reload();
+        }
+        finally {
+            this.reloading = false;
+        }
+    }
+
+    @Override
     public void enable() {
         foliaLib = new FoliaLib(this);
 
@@ -88,7 +101,9 @@ public class CratesPlugin extends NightPlugin {
         CratesRegistries.registerCostType(new EcoCostType(this, this.dialogRegistry));
         this.proceedAddons(CratesAddon::onInit);
 
-        this.dataHandler = new DataHandler(this);
+        if (this.dataHandler == null) {
+            this.dataHandler = new DataHandler(this);
+        }
         this.dataHandler.setup();
 
         this.dataManager = new DataManager(this);
@@ -128,11 +143,13 @@ public class CratesPlugin extends NightPlugin {
         if (this.openingManager != null) this.openingManager.shutdown();
         if (this.keyManager != null) this.keyManager.shutdown();
         if (this.crateManager != null) this.crateManager.shutdown();
-        //if (this.menuManager != null) this.menuManager.shutdown();
         if (this.hologramManager != null) this.hologramManager.shutdown();
         if (this.userManager != null) this.userManager.shutdown();
         if (this.dataManager != null) this.dataManager.shutdown();
-        if (this.dataHandler != null) this.dataHandler.shutdown();
+        if (this.dataHandler != null) {
+            this.dataHandler.shutdown();
+            if (!this.reloading) this.dataHandler = null;
+        }
         if (this.dialogRegistry != null) this.dialogRegistry.clear();
 
         if (Plugins.hasPlaceholderAPI()) {

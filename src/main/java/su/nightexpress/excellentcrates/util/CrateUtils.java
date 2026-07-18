@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.config.Keys;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
+import su.nightexpress.nightcore.bridge.item.AdaptedItem;
 import su.nightexpress.nightcore.util.*;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
@@ -62,6 +63,16 @@ public class CrateUtils {
     @NotNull
     public static ItemStack getQuestionStack() {
         return NightItem.asCustomHead("2705fd94a0c431927fb4e639b0fcfb49717e412285a02b439e0112da22b2e2ec").hideAllComponents().getItemStack();
+    }
+
+    @NotNull
+    public static AdaptedItem getQuestionItem() {
+        return QuestionItemHolder.INSTANCE;
+    }
+
+    private static final class QuestionItemHolder {
+
+        private static final AdaptedItem INSTANCE = ItemHelper.vanilla(getQuestionStack());
     }
 
     @NotNull

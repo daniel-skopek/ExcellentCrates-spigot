@@ -20,7 +20,7 @@ public class ItemHelper {
 
     @NotNull
     public static AdaptedItem readOrPlaceholder(@NotNull FileConfig config, @NotNull String path) {
-        return read(config, path).orElse(vanilla(CrateUtils.getQuestionStack()));
+        return read(config, path).orElseGet(CrateUtils::getQuestionItem);
     }
 
     @NotNull
@@ -75,7 +75,7 @@ public class ItemHelper {
 
     @NotNull
     public static ItemStack toItemStack(@NotNull AdaptedItem item) {
-        return item.itemStack().orElse(CrateUtils.getQuestionStack());
+        return item.itemStack().orElseGet(CrateUtils::getQuestionStack);
     }
 
     public static boolean isCustom(@NotNull ItemStack itemStack) {

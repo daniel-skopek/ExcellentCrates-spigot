@@ -96,7 +96,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
         this.loadCrates();
         this.loadUI();
         this.loadDialogs();
-        this.plugin.getFoliaLib().getScheduler().runLater(task -> this.reportProblems(), 0); // After everything is loaded.
+        this.plugin.getFoliaLib().getScheduler().runLaterAsync(task -> this.reportProblems(), 1L); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 
@@ -188,13 +188,34 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     private void loadCrates() {
-        for (File file : FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false)) {
-            String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
+        List<Crate> loaded = FileUtil.getFiles(plugin.getDataFolder() + Config.DIR_CRATES, false).parallelStream()
+            .map(this::readCrate)
+            .filter(Objects::nonNull)
+            .toList();
 
-            Crate crate = new Crate(plugin, file.toPath(), id);
-            this.loadCrate(crate);
-        }
+        loaded.forEach(crate -> {
+            this.crateByIdMap.put(crate.getId(), crate);
+            this.addCratePositions(crate);
+        });
+
         this.plugin.info("Loaded " + this.crateByIdMap.size() + " crates.");
+    }
+
+    @Nullable
+    private Crate readCrate(@NotNull File file) {
+        String id = Strings.varStyle(FileConfig.getName(file)).orElseThrow(); // TODO Handle
+
+        Crate crate = new Crate(plugin, file.toPath(), id);
+        try {
+            crate.load();
+        }
+        catch (IllegalStateException exception) {
+            this.plugin.error("Crate '" + crate.getPath() + "' can not be loaded.");
+            exception.printStackTrace();
+            return null;
+        }
+
+        return crate;
     }
 
     private void loadCrate(@NotNull Crate crate) {
