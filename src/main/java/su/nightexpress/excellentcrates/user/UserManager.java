@@ -14,6 +14,11 @@ public class UserManager extends AbstractUserManager<CratesPlugin, CrateUser> {
     }
 
     @Override
+    public void loadOnline() {
+        this.plugin.getFoliaLib().getScheduler().runAsync(task -> super.loadOnline());
+    }
+
+    @Override
     @NotNull
     public CrateUser create(@NotNull UUID uuid, @NotNull String name) {
         return new CrateUser(uuid, name);

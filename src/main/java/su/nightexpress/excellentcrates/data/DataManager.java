@@ -76,6 +76,8 @@ public class DataManager extends AbstractManager<CratesPlugin> {
     }
 
     public void loadData() {
+        this.plugin.getDataHandler().updateRewardLimits();
+
         this.loadCrateDatas();
         this.loadRewardLimits();
 

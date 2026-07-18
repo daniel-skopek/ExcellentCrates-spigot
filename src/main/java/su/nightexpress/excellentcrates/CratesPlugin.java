@@ -114,8 +114,6 @@ public class CratesPlugin extends NightPlugin {
         this.editorManager = new EditorManager(this, this.dialogRegistry);
         this.editorManager.setup();
 
-        this.dataHandler.updateRewardLimits();
-
         if (Plugins.hasPlaceholderAPI()) {
             PlaceholderHook.setup(this);
         }
