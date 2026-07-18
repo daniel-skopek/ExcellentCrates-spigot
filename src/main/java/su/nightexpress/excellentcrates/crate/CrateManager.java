@@ -728,11 +728,12 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
     }
 
     public void playCrateEffects() {
-        this.getCrates().forEach(crate -> {
+        this.crateByIdMap.values().forEach(crate -> {
             if (!crate.isEffectEnabled()) return;
 
             CrateEffect effect = crate.getEffect();
             if (effect.isDummy()) return;
+            if (!effect.isPlayingStep()) return;
 
             UniParticle particle = crate.getEffectParticle();
 

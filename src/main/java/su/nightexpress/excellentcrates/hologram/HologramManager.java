@@ -70,7 +70,7 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
     }
 
     private void tickHolograms() {
-        this.plugin.getCrateManager().getCrates().forEach(crate -> {
+        this.plugin.getCrateManager().getCratesMap().values().forEach(crate -> {
             if (!crate.isHologramEnabled()) return;
 
             try {
@@ -205,6 +205,8 @@ public class HologramManager extends AbstractManager<CratesPlugin> {
                     boolean needSpawn = !group.isViewer(player);
 
                     List<String> hologramText = Replacer.create().replacePlaceholderAPI(player).apply(text);
+                    if (!group.updateTextCache(player, hologramText) && !needSpawn) return;
+
                     List<FakeEntity> holograms = group.getEntities();
                     for (int index = 0; index < holograms.size(); index++) {
                         String line = index >= hologramText.size() ? "" : hologramText.get(index);

@@ -13,6 +13,7 @@ import su.nightexpress.nightcore.util.text.night.NightMessage;
 import su.nightexpress.nightcore.util.text.night.wrapper.TagWrappers;
 import su.nightexpress.nightcore.util.wrapper.UniParticle;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -24,17 +25,29 @@ public class CrateUtils {
 
     @NotNull
     public static Set<Player> getPlayersForEffects(@NotNull Location location) {
-        Set<Player> players = new HashSet<>(Bukkit.getServer().getOnlinePlayers());
-        players.removeIf(player -> !isInEffectRange(player, location));
+        World world = location.getWorld();
+        if (world == null) return Collections.emptySet();
+
+        int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
+        double distanceSquared = (double) distance * distance;
+
+        Set<Player> players = new HashSet<>();
+        for (Player player : world.getPlayers()) {
+            if (player.getLocation().distanceSquared(location) <= distanceSquared) {
+                players.add(player);
+            }
+        }
 
         return players;
     }
 
     public static boolean isInEffectRange(@NotNull Player player, @NotNull Location location) {
         World world = location.getWorld();
+        if (player.getWorld() != world) return false;
+
         int distance = Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get();
 
-        return player.getWorld() == world && player.getLocation().distance(location) <= distance;
+        return player.getLocation().distanceSquared(location) <= (double) distance * distance;
     }
 
     @NotNull
