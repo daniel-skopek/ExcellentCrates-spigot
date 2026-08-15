@@ -42,7 +42,7 @@ public class CrateMilestonesMenu extends LinkedMenu<CratesPlugin, Crate> impleme
         .appendCurrent("Reward Id", MILESTONE_REWARD_ID)
         .br()
         .appendClick("Left-Click to change openings")
-        .appendClick("Right-Click tochange reward")
+        .appendClick("Right-Click to change reward")
         .appendClick("Shift-Right delete " + SOFT_RED.wrap("(no undo)"))
         .build();
 
