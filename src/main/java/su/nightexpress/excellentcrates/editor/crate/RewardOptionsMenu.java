@@ -89,7 +89,7 @@ public class RewardOptionsMenu extends LinkedMenu<CratesPlugin, Reward> implemen
     public static final IconLocale LOCALE_BROADCAST = LangEntry.iconBuilder("Editor.Button.Reward.Broadcast")
         .name("Win Broadcast")
         .appendCurrent("State", GENERIC_STATE).br()
-        .appendInfo("Restricts player access to the reward", "based on their permissions.").br()
+        .appendInfo("Announces to all players when", "someone wins this reward.").br()
         .appendClick("Click to toggle")
         .build();
 
