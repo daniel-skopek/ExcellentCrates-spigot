@@ -12,6 +12,7 @@ import su.nightexpress.nightcore.integration.item.impl.AdaptedCustomStack;
 import su.nightexpress.nightcore.integration.item.impl.AdaptedItemStack;
 import su.nightexpress.nightcore.integration.item.impl.AdaptedVanillaStack;
 import su.nightexpress.nightcore.util.ItemTag;
+import su.nightexpress.nightcore.util.ItemUtil;
 import su.nightexpress.nightcore.util.Version;
 
 import java.util.Optional;
@@ -81,6 +82,20 @@ public class ItemHelper {
     public static boolean isCustom(@NotNull ItemStack itemStack) {
         ItemAdapter<?> adapter = ItemBridge.getAdapter(itemStack);
         return adapter != null && !adapter.isVanilla();
+    }
+
+    public static void fixCustomMeta(@NotNull ItemStack itemStack) {
+        ItemUtil.editMeta(itemStack, meta -> {
+            if (meta.hasItemName()) {
+                ItemUtil.setItemName(meta, meta.getItemName());
+            }
+            if (meta.hasDisplayName()) {
+                ItemUtil.setCustomName(meta, meta.getDisplayName());
+            }
+            if (meta.hasLore()) {
+                ItemUtil.setLore(meta, meta.getLore());
+            }
+        });
     }
 
     @NotNull
