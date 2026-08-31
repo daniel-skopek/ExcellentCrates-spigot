@@ -55,7 +55,7 @@ public class OpeningListener extends AbstractListener<CratesPlugin> {
             opening.stop();
         }
 
-        plugin.getFoliaLib().getScheduler().runLater(player::updateInventory, 1);
+        plugin.runTask(player, player::updateInventory);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
