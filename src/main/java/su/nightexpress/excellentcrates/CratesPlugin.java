@@ -142,8 +142,8 @@ public class CratesPlugin extends NightPlugin {
         if (this.editorManager != null) this.editorManager.shutdown();
         if (this.openingManager != null) this.openingManager.shutdown();
         if (this.keyManager != null) this.keyManager.shutdown();
-        if (this.crateManager != null) this.crateManager.shutdown();
         if (this.hologramManager != null) this.hologramManager.shutdown();
+        if (this.crateManager != null) this.crateManager.shutdown();
         if (this.userManager != null) this.userManager.shutdown();
         if (this.dataManager != null) this.dataManager.shutdown();
         if (this.dataHandler != null) {
