@@ -4,6 +4,7 @@ import com.fancyinnovations.fancyholograms.api.FancyHolograms;
 import com.fancyinnovations.fancyholograms.api.HologramRegistry;
 import com.fancyinnovations.fancyholograms.api.data.TextHologramData;
 import com.fancyinnovations.fancyholograms.api.hologram.Hologram;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,6 +27,8 @@ import java.util.Set;
 
 public class HologramFancyHandler implements HologramHandler {
 
+    private static final String HOLOGRAM_FILE_PATH = "excellentcrates";
+
     private final CratesPlugin plugin;
 
     private final Map<String, Map<WorldPos, Hologram>> hologramMap;
@@ -42,6 +45,13 @@ public class HologramFancyHandler implements HologramHandler {
         return FancyHolograms.get().getRegistry();
     }
 
+    private void removeHologram(@NotNull Hologram hologram) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            hologram.despawnFrom(player);
+        }
+        this.getRegistry().unregister(hologram);
+    }
+
     @Override
     public void create(@NotNull Crate crate) {
         this.delete(crate);
@@ -54,8 +64,7 @@ public class HologramFancyHandler implements HologramHandler {
         this.disabledMap.remove(crate.getId());
         if (map == null) return;
 
-        HologramRegistry registry = this.getRegistry();
-        map.values().forEach(registry::unregister);
+        map.values().forEach(this::removeHologram);
     }
 
     @Override
@@ -80,7 +89,7 @@ public class HologramFancyHandler implements HologramHandler {
 
         Hologram hologram = map.remove(blockPos);
         if (hologram != null) {
-            this.getRegistry().unregister(hologram);
+            this.removeHologram(hologram);
         }
     }
 
@@ -127,7 +136,11 @@ public class HologramFancyHandler implements HologramHandler {
             return;
         }
 
-        TextHologramData data = new TextHologramData(this.createName(crate, blockPos), location);
+        String name = this.createName(crate, blockPos);
+        this.getRegistry().get(name).ifPresent(this::removeHologram);
+
+        TextHologramData data = new TextHologramData(name, location);
+        data.setFilePath(HOLOGRAM_FILE_PATH);
         data.setText(text);
         data.setBillboard(Config.CRATE_HOLOGRAM_BILLBOARD.get());
         data.setTextShadow(Config.CRATE_HOLOGRAM_SHADOW.get());
