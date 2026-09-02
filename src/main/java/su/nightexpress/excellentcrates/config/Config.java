@@ -3,20 +3,17 @@ package su.nightexpress.excellentcrates.config;
 import org.bukkit.entity.Display;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nightexpress.excellentcrates.hologram.HologramTemplate;
 import su.nightexpress.excellentcrates.hooks.HookId;
 import su.nightexpress.excellentcrates.util.CrateUtils;
 import su.nightexpress.nightcore.config.ConfigValue;
+import su.nightexpress.nightcore.config.FileConfig;
 import su.nightexpress.nightcore.util.Enums;
-import su.nightexpress.nightcore.util.Plugins;
 import su.nightexpress.nightcore.util.bukkit.NightItem;
 import su.nightexpress.nightcore.util.time.TimeFormatType;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static su.nightexpress.excellentcrates.Placeholders.WIKI_PLACEHOLDERS;
 
 public class Config {
 
@@ -33,6 +30,8 @@ public class Config {
 
     public static final String FILE_MILESTONES = "milestones.yml";
     public static final String FILE_LOGS       = "openings.log";
+
+    private static final Map<String, List<String>> LEGACY_HOLOGRAM_TEMPLATES = new HashMap<>();
 
     public static final ConfigValue<String> LOGS_DATE_FORMAT = ConfigValue.create("Logs.DateFormat",
         "dd/MM/yyyy HH:mm:ss",
@@ -114,15 +113,6 @@ public class Config {
     public static final ConfigValue<Integer> CRATE_EFFECTS_VISIBILITY_DISTANCE = ConfigValue.create("Crate.Effects.Visibility_Distance",
         24,
         "Sets max. distance where players can see crate particles and holograms."
-    );
-
-    public static final ConfigValue<Map<String, HologramTemplate>> CRATE_HOLOGRAM_TEMPLATES = ConfigValue.forMapById("Crate.Holograms.TemplateList",
-        HologramTemplate::read,
-        map -> map.putAll(HologramTemplate.getDefaultTemplates()),
-        "Custom hologram templates to display above crate blocks.",
-        "Allowed Placeholders:",
-        "- " + Plugins.PLACEHOLDER_API + " placeholders.",
-        "- Crate placeholders: " + WIKI_PLACEHOLDERS
     );
 
     public static final ConfigValue<Double> CRATE_HOLOGRAM_LINE_GAP = ConfigValue.create("Crate.Holograms.LineGap",
@@ -261,14 +251,21 @@ public class Config {
         return DATA_REWARD_LIMITS_SYNC_ENABLED.get();
     }
 
-    @NotNull
-    public static List<String> getHologramTemplateIds() {
-        return new ArrayList<>(CRATE_HOLOGRAM_TEMPLATES.get().keySet());
+    public static void loadLegacyHologramTemplates(@NotNull FileConfig config) {
+        LEGACY_HOLOGRAM_TEMPLATES.clear();
+
+        config.getSection("Crate.Holograms.TemplateList").forEach(id -> {
+            LEGACY_HOLOGRAM_TEMPLATES.put(id.toLowerCase(), config.getStringList("Crate.Holograms.TemplateList." + id + ".Text"));
+        });
+
+        config.getSection("Crate.Holograms.Templates").forEach(id -> {
+            LEGACY_HOLOGRAM_TEMPLATES.putIfAbsent(id.toLowerCase(), config.getStringList("Crate.Holograms.Templates." + id));
+        });
     }
 
     @Nullable
-    public static HologramTemplate getHologramTemplate(@NotNull String id) {
-        return CRATE_HOLOGRAM_TEMPLATES.get().get(id.toLowerCase());
+    public static List<String> getLegacyHologramTemplate(@NotNull String id) {
+        return LEGACY_HOLOGRAM_TEMPLATES.get(id.toLowerCase());
     }
 
     public static boolean isCrateInAirBlocksAllowed() {

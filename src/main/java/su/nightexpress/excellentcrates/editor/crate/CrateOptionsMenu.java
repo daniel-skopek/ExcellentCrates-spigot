@@ -136,7 +136,7 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
     public static final IconLocale LOCALE_HOLOGRAM = LangEntry.iconBuilder("Editor.Button.Crate.Hologram").name("Crate Hologram")
         .appendCurrent("Status", GENERIC_INSPECTION)
         .appendCurrent("State", GENERIC_STATE)
-        .appendCurrent("Template", GENERIC_VALUE).br()
+        .appendCurrent("Lines", GENERIC_VALUE).br()
         .appendInfo("Auto-manageable hologram above", "the linked crate block.").br()
         .appendClick("Click to edit")
         .build();
@@ -322,9 +322,9 @@ public class CrateOptionsMenu extends LinkedMenu<CratesPlugin, Crate> implements
             viewer.addItem(NightItem.fromType(Material.ARMOR_STAND)
                 .localized(LOCALE_HOLOGRAM)
                 .replacement(replacer -> replacer
-                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_CRATE_HOLOGRAM, crate.isHologramTemplateValid()))
+                    .replace(GENERIC_INSPECTION, () -> Lang.inspection(Lang.INSPECTIONS_CRATE_HOLOGRAM, crate.hasHologramText()))
                     .replace(GENERIC_STATE, () -> CoreLang.STATE_ENABLED_DISALBED.get(crate.isHologramEnabled()))
-                    .replace(GENERIC_VALUE, crate::getHologramTemplateId)
+                    .replace(GENERIC_VALUE, () -> String.valueOf(crate.getHologramText().size()))
                 )
                 .toMenuItem().setSlots(32).setHandler((viewer1, event) -> {
                     this.dialogs.show(player, CrateDialogs.CRATE_HOLOGRAM, crate, flush);
