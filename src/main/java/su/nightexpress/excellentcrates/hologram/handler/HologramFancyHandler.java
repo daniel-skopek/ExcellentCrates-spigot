@@ -17,7 +17,6 @@ import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
 import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
-import su.nightexpress.nightcore.util.text.night.NightMessage;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -133,6 +132,7 @@ public class HologramFancyHandler implements HologramHandler {
             if (existing.getData() instanceof TextHologramData textData) {
                 textData.setText(text);
             }
+            existing.getData().setHasChanges(true);
             return;
         }
 
@@ -157,9 +157,7 @@ public class HologramFancyHandler implements HologramHandler {
 
     @NotNull
     private List<String> createText(@NotNull Crate crate) {
-        return Replacer.create().replace(crate.replacePlaceholders()).apply(crate.getHologramText()).stream()
-            .map(NightMessage::asLegacy)
-            .toList();
+        return Replacer.create().replace(crate.replacePlaceholders()).apply(crate.getHologramText());
     }
 
     @NotNull
