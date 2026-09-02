@@ -14,6 +14,7 @@ import su.nightexpress.excellentcrates.config.Config;
 import su.nightexpress.excellentcrates.crate.impl.Crate;
 import su.nightexpress.excellentcrates.hologram.HologramHandler;
 import su.nightexpress.excellentcrates.util.pos.WorldPos;
+import su.nightexpress.nightcore.util.LocationUtil;
 import su.nightexpress.nightcore.util.placeholder.Replacer;
 import su.nightexpress.nightcore.util.text.night.NightMessage;
 
@@ -111,6 +112,10 @@ public class HologramFancyHandler implements HologramHandler {
     private void render(@NotNull Crate crate, @NotNull WorldPos blockPos, @NotNull List<String> text) {
         Location location = blockPos.toLocation();
         if (location == null) return;
+
+        double yOffset = crate.getHologramYOffset() + 0.2;
+        double height = 1.0D / 2D + yOffset;
+        LocationUtil.setCenter3D(location).add(0, height, 0);
 
         Map<WorldPos, Hologram> map = this.hologramMap.computeIfAbsent(crate.getId(), k -> new HashMap<>());
 
