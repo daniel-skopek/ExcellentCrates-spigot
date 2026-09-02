@@ -47,7 +47,7 @@ public class KeyManager extends AbstractManager<CratesPlugin> {
         this.loadCost();
         this.loadKeys();
         this.loadDialogs();
-        this.plugin.getFoliaLib().getScheduler().runLaterAsync(task -> this.reportProblems(), 1L); // When everything is loaded.
+        this.plugin.runTaskLaterAsync(this::reportProblems, 1L); // When everything is loaded.
 
         this.addListener(new KeyListener(this.plugin, this));
         this.addAsyncTask(this::saveKeys, Config.CRATE_SAVE_INTERVAL.get()); // TODO Config

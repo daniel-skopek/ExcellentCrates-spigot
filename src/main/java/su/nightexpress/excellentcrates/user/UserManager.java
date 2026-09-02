@@ -15,7 +15,7 @@ public class UserManager extends AbstractUserManager<CratesPlugin, CrateUser> {
 
     @Override
     public void loadOnline() {
-        this.plugin.getFoliaLib().getScheduler().runAsync(task -> super.loadOnline());
+        this.plugin.runTaskAsync(super::loadOnline);
     }
 
     @Override

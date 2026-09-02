@@ -98,7 +98,7 @@ public class CrateManager extends AbstractManager<CratesPlugin> {
 
         this.removeLegacyHologramTemplates();
 
-        this.plugin.getFoliaLib().getScheduler().runLaterAsync(task -> this.reportProblems(), 1L); // After everything is loaded.
+        this.plugin.runTaskLaterAsync(this::reportProblems, 1L); // After everything is loaded.
 
         this.addListener(new CrateListener(this.plugin, this));
 

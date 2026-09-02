@@ -1,6 +1,5 @@
 package su.nightexpress.excellentcrates;
 
-import com.tcoded.folialib.FoliaLib;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import su.nightexpress.excellentcrates.api.addon.CratesAddon;
@@ -50,8 +49,6 @@ public class CratesPlugin extends NightPlugin {
 
     private CrateLogger crateLogger;
 
-    private FoliaLib foliaLib;
-
     private boolean reloading;
 
     @Override
@@ -91,8 +88,6 @@ public class CratesPlugin extends NightPlugin {
 
     @Override
     public void enable() {
-        foliaLib = new FoliaLib(this);
-
         this.crateLogger = new CrateLogger(this);
         this.dialogRegistry = new DialogRegistry(this);
 
