@@ -62,6 +62,12 @@
             <name>FancyInnovations Repository</name>
             <url>https://repo.fancyinnovations.com/releases</url>
         </repository>
+
+        <repository>
+            <id>fancyinnovations-snapshots</id>
+            <name>FancyInnovations Snapshots</name>
+            <url>https://repo.fancyinnovations.com/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -89,7 +95,7 @@
         <dependency>
             <groupId>de.oliver</groupId>
             <artifactId>FancyHolograms</artifactId>
-            <version>2.9.1</version>
+            <version>3.0.0-SNAPSHOT.4</version>
             <scope>provided</scope>
         </dependency>
 

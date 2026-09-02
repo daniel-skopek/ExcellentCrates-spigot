@@ -1,9 +1,9 @@
 package su.nightexpress.excellentcrates.hologram.handler;
 
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.HologramManager;
-import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.hologram.Hologram;
+import com.fancyinnovations.fancyholograms.api.FancyHolograms;
+import com.fancyinnovations.fancyholograms.api.HologramRegistry;
+import com.fancyinnovations.fancyholograms.api.data.TextHologramData;
+import com.fancyinnovations.fancyholograms.api.hologram.Hologram;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -37,8 +37,8 @@ public class HologramFancyHandler implements HologramHandler {
     }
 
     @NotNull
-    private HologramManager getManager() {
-        return FancyHologramsPlugin.get().getHologramManager();
+    private HologramRegistry getRegistry() {
+        return FancyHolograms.get().getRegistry();
     }
 
     @Override
@@ -53,8 +53,8 @@ public class HologramFancyHandler implements HologramHandler {
         this.disabledMap.remove(crate.getId());
         if (map == null) return;
 
-        HologramManager manager = this.getManager();
-        map.values().forEach(manager::removeHologram);
+        HologramRegistry registry = this.getRegistry();
+        map.values().forEach(registry::unregister);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class HologramFancyHandler implements HologramHandler {
 
         Hologram hologram = map.remove(blockPos);
         if (hologram != null) {
-            this.getManager().removeHologram(hologram);
+            this.getRegistry().unregister(hologram);
         }
     }
 
@@ -118,7 +118,6 @@ public class HologramFancyHandler implements HologramHandler {
         if (existing != null) {
             if (existing.getData() instanceof TextHologramData textData) {
                 textData.setText(text);
-                existing.queueUpdate();
             }
             return;
         }
@@ -132,9 +131,8 @@ public class HologramFancyHandler implements HologramHandler {
         data.setVisibilityDistance(Config.CRATE_EFFECTS_VISIBILITY_DISTANCE.get());
         data.setPersistent(false);
 
-        HologramManager manager = this.getManager();
-        Hologram hologram = manager.create(data);
-        manager.addHologram(hologram);
+        Hologram hologram = FancyHolograms.get().getHologramFactory().apply(data);
+        this.getRegistry().register(hologram);
 
         map.put(blockPos, hologram);
     }
