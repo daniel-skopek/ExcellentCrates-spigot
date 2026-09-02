@@ -4,7 +4,6 @@ import com.fancyinnovations.fancyholograms.api.FancyHolograms;
 import com.fancyinnovations.fancyholograms.api.HologramRegistry;
 import com.fancyinnovations.fancyholograms.api.data.TextHologramData;
 import com.fancyinnovations.fancyholograms.api.hologram.Hologram;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,9 +44,6 @@ public class HologramFancyHandler implements HologramHandler {
     }
 
     private void removeHologram(@NotNull Hologram hologram) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            hologram.despawnFrom(player);
-        }
         this.getRegistry().unregister(hologram);
     }
 
